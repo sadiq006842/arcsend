@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ArcSend — Instant USDC Remittance</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="container">
+
+    <!-- Header -->
+    <div class="header">
+      <div class="logo-wrapper">
+        <div class="logo-icon">⚡</div>
+        <h1>ArcSend</h1>
+      </div>
+      <p>Send USDC globally, instantly. Powered by Arc & Circle.</p>
+      <div class="badge">
+        <span class="dot"></span> Live on Arc Testnet
+      </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats-row">
+      <div class="stat-box">
+        <div class="stat-value">~0s</div>
+        <div class="stat-label">Finality</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-value">$0.01</div>
+        <div class="stat-label">Base Fee</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-value" id="txCount">0</div>
+        <div class="stat-label">Your TXs</div>
+      </div>
+    </div>
+
+    <!-- Wallet Card -->
+    <div class="card" id="walletCard">
+      <button id="connectBtn" onclick="connectWallet()">
+        Connect Wallet
+      </button>
+
+      <div id="walletInfo" style="display:none">
+        <div class="wallet-row">
+          <div>
+            <div class="network-pill">
+              <span class="net-dot"></span> Arc Testnet
+            </div>
+            <p id="walletAddress" class="wallet-address"></p>
+          </div>
+          <div class="wallet-actions">
+            <button class="icon-btn" onclick="copyAddress()" title="Copy Address">⧉</button>
+            <button class="icon-btn disconnect" onclick="disconnectWallet()" title="Disconnect">✕</button>
+          </div>
+        </div>
+        <div class="balance-section">
+          <p id="usdcBalance" class="balance">0.00</p>
+          <p class="balance-label">USDC Available</p>
+          <button class="refresh-btn" onclick="updateBalance()">↻ Refresh</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Send Card -->
+    <div class="card">
+      <h2>Send Money</h2>
+
+      <label>Amount in NGN (₦)</label>
+      <input
+        type="number"
+        id="ngnAmount"
+        placeholder="e.g. 50,000"
+        oninput="convertToUSDC()"
+      />
+
+      <div class="conversion-box">
+        <div class="conversion-row rate">
+          <span class="label">Live Exchange Rate</span>
+          <span class="value" id="rateDisplay">Loading...</span>
+        </div>
+        <div class="divider"></div>
+        <div class="conversion-row">
+          <span class="label">You Send</span>
+          <span class="value" id="usdcAmount">— USDC</span>
+        </div>
+        <div class="conversion-row fee">
+          <span class="label">Network Fee</span>
+          <span class="value">~0.01 USDC</span>
+        </div>
+        <div class="divider"></div>
+        <div class="conversion-row total">
+          <span class="label">Total Deducted</span>
+          <span class="value" id="totalAmount">— USDC</span>
+        </div>
+      </div>
+
+      <label>Recipient Wallet Address</label>
+      <input
+        type="text"
+        id="recipientAddress"
+        placeholder="0x..."
+        oninput="checkRecent()"
+      />
+
+      <!-- Recent Recipients -->
+      <div id="recentBox" class="recent-box" style="display:none">
+        <p class="recent-title">Recent Recipients</p>
+        <div id="recentList"></div>
+      </div>
+
+      <button id="sendBtn" onclick="confirmSend()" disabled>
+        ↗ Send USDC
+      </button>
+
+      <div id="statusBox" class="status-box"></div>
+    </div>
+
+    <!-- Transaction History -->
+    <div class="card" id="historyCard" style="display:none">
+      <h2>Transaction History</h2>
+      <div id="txList"></div>
+      <button class="clear-btn" onclick="clearHistory()">Clear History</button>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+      <p>Built on <strong>Arc Testnet</strong> · Powered by <strong>Circle USDC</strong></p>
+      <div class="powered-by">
+        <span>🔒 Non-custodial</span>
+        <span>⚡ Sub-second finality</span>
+        <span>🌍 Nigeria → Global</span>
+      </div>
+      <p style="margin-top:12px">For testnet & demo purposes only</p>
+    </div>
+
+  </div>
+
+  <!-- Confirm Modal -->
+  <div id="modal" class="modal-overlay" style="display:none">
+    <div class="modal">
+      <h3>Confirm Transaction</h3>
+      <div class="modal-row">
+        <span>Sending</span>
+        <span id="modalAmount" class="modal-value"></span>
+      </div>
+      <div class="modal-row">
+        <span>To</span>
+        <span id="modalRecipient" class="modal-value small"></span>
+      </div>
+      <div class="modal-row">
+        <span>Network Fee</span>
+        <span class="modal-value">~0.01 USDC</span>
+      </div>
+      <div class="modal-divider"></div>
+      <div class="modal-row total">
+        <span>Total</span>
+        <span id="modalTotal" class="modal-value"></span>
+      </div>
+      <div class="modal-buttons">
+        <button class="modal-cancel" onclick="closeModal()">Cancel</button>
+        <button class="modal-confirm" onclick="sendUSDC()">Confirm Send</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Copy Toast -->
+  <div id="toast" class="toast">Address copied!</div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.2/ethers.umd.min.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
